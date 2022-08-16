@@ -29,3 +29,6 @@ Users should be able to create posts, Each post should have a category/topic tag
 - PROD & DEV environment setup
 - Documentation using Swagger
 
+## ER Diagram
+<img src="https://user-images.githubusercontent.com/40179909/184941447-5120b1b6-7e34-42e3-b43e-eccaa7e06f11.jpg" width="700" hspace="60" vspace="60">
+

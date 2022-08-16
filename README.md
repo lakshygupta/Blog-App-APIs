@@ -19,6 +19,7 @@ Users should be able to create posts, Each post should have a category/topic tag
 - Post limiting for pagination
 - Post sorting
 - Role based authentication
+- Custom Exception handling
 - JWT authentication
 - DTO pattern
 - Image upload

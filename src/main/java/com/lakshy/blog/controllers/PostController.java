@@ -5,14 +5,19 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.lakshy.blog.payloads.ApiResponse;
 import com.lakshy.blog.payloads.PostDto;
+import com.lakshy.blog.payloads.PostResponse;
 import com.lakshy.blog.services.PostService;
 
 @RestController
@@ -57,4 +62,28 @@ public class PostController {
 		List<PostDto> posts = this.postService.getAllPosts();
 		return new ResponseEntity<List<PostDto>>(posts,HttpStatus.OK);
 	}
+	
+	@DeleteMapping("/posts/{postId}")
+	public ResponseEntity<ApiResponse> deletePost(@PathVariable Integer postId)
+	{
+		postService.deletePost(postId);
+		return new ResponseEntity<ApiResponse>(new ApiResponse("Post Deleted successfully",true),HttpStatus.OK);
+	}
+	
+	@PutMapping("/posts/{postId}")
+	public ResponseEntity<PostDto> updatePost(@RequestBody PostDto postDto,@PathVariable Integer postId)
+	{
+		System.out.println("here");
+		PostDto post = postService.updatePost(postDto, postId);
+		return new ResponseEntity<PostDto>(post,HttpStatus.OK);
+	}
+	
+	@GetMapping("/postsPage")
+	public ResponseEntity<PostResponse> getAllPostsByPage(
+			@RequestParam(value="pageNumber",defaultValue = "0",required = false) Integer pageNumber,
+			@RequestParam(value="pageSize",defaultValue = "10",required = false) Integer pageSize
+			){
+		PostResponse postResponse = this.postService.getAllPostsByPage(pageNumber,pageSize);
+		return new ResponseEntity<PostResponse>(postResponse,HttpStatus.OK);
+	} 
 }

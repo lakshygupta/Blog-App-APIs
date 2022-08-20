@@ -3,6 +3,7 @@ package com.lakshy.blog.services;
 import java.util.List;
 
 import com.lakshy.blog.payloads.PostDto;
+import com.lakshy.blog.payloads.PostResponse;
 
 public interface PostService {
 	
@@ -25,5 +26,6 @@ public interface PostService {
 	// search posts by keyword
 	List<PostDto> searchPost(String keyword);
 	
-	 
+	 // pagination using JpaRepository -> to send its response we have a seperate PostResponse class in PayLoad
+	PostResponse getAllPostsByPage(Integer pageNumber, Integer pageSize);
 }

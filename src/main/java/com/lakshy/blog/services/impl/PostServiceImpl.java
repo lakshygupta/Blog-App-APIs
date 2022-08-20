@@ -6,6 +6,9 @@ import java.util.stream.Collectors;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import com.lakshy.blog.entities.Category;
@@ -13,6 +16,7 @@ import com.lakshy.blog.entities.Post;
 import com.lakshy.blog.entities.User;
 import com.lakshy.blog.exceptions.ResourceNotFoundException;
 import com.lakshy.blog.payloads.PostDto;
+import com.lakshy.blog.payloads.PostResponse;
 import com.lakshy.blog.repositories.CategoryRepo;
 import com.lakshy.blog.repositories.PostRepo;
 import com.lakshy.blog.repositories.UserRepo;
@@ -53,13 +57,21 @@ public class PostServiceImpl implements PostService {
 
 	@Override
 	public PostDto updatePost(PostDto postDto, Integer postId) {
-		// TODO Auto-generated method stub
-		return null;
+		Post post = this.postRepo.findById(postId).orElseThrow(() -> new ResourceNotFoundException("Post", "Id", postId));
+		System.out.println("here 2");
+		post.setTitle(postDto.getTitle());
+		post.setContent(postDto.getContent());
+		post.setImageName(postDto.getImageName());
+		
+		Post updatedPost = postRepo.save(post);
+		
+		return this.modelMapper.map(updatedPost, PostDto.class);
 	}
 
 	@Override
 	public void deletePost(Integer postId) {
-		// TODO Auto-generated method stub
+		Post post = this.postRepo.findById(postId).orElseThrow(() -> new ResourceNotFoundException("Post", "Id", postId));
+		postRepo.delete(post);
 
 	}
 
@@ -102,6 +114,29 @@ public class PostServiceImpl implements PostService {
 	public List<PostDto> searchPost(String keyword) {
 		// TODO Auto-generated method stub
 		return null;
+	}
+
+	// Pagination and Sorting
+	@Override
+	public PostResponse getAllPostsByPage(Integer pageNumber, Integer pageSize) {
+
+		Pageable pg = PageRequest.of(pageNumber, pageSize);
+		
+		Page<Post> pagePosts = this.postRepo.findAll(pg);
+		List<Post> posts = pagePosts.getContent();
+		
+		//content
+		List<PostDto> postDtos = posts.stream().map((p) -> this.modelMapper.map(p, PostDto.class)).collect(Collectors.toList());
+		
+		PostResponse postResponse = new PostResponse();
+		postResponse.setContent(postDtos);
+		postResponse.setPageNumber(pagePosts.getNumber());
+		postResponse.setPageSize(pagePosts.getSize());
+		postResponse.setTotalElements(pagePosts.getTotalElements());
+		postResponse.setTotalPages(pagePosts.getTotalPages());
+		postResponse.setLastPage(pagePosts.isLast());		
+		
+		return postResponse;
 	}
 
 }

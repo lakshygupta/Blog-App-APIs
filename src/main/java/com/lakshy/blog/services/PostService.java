@@ -17,15 +17,16 @@ public interface PostService {
 	
 	PostDto getPostById(Integer postId);
 	
+	// implementing pagination on getPostsByCategory, [view getPostsByUsers implementation for naive approach]
 	//get all posts by category
-	List<PostDto> getPostsByCategory(Integer categoryId);
+	PostResponse getPostsByCategory(Integer categoryId, Integer pageNumber, Integer pageSize);
 	
 	// get all posts by User
 	List<PostDto> getPostsByUsers(Integer userId);
 	
-	// search posts by keyword
+	// search title posts by keyword
 	List<PostDto> searchPost(String keyword);
 	
 	 // pagination using JpaRepository -> to send its response we have a seperate PostResponse class in PayLoad
-	PostResponse getAllPostsByPage(Integer pageNumber, Integer pageSize);
+	PostResponse getAllPostsByPage(Integer pageNumber, Integer pageSize, String sortBy, String sortDir);
 }

@@ -36,10 +36,14 @@ public class PostController {
 	
 	// get posts by category
 	@GetMapping("/category/{categoryId}/posts")
-	public ResponseEntity<List<PostDto>> getPostsByCategory(@PathVariable Integer categoryId)
+	public ResponseEntity<PostResponse> getPostsByCategory(
+			@PathVariable Integer categoryId,
+			@RequestParam(value="pageNumber",defaultValue = "0",required = false) Integer pageNumber,
+			@RequestParam(value="pageSize",defaultValue = "10",required = false) Integer pageSize
+			)
 	{
-		List<PostDto> posts = this.postService.getPostsByCategory(categoryId);
-		return new ResponseEntity<List<PostDto>>(posts,HttpStatus.OK);
+		PostResponse postResponse = this.postService.getPostsByCategory(categoryId,pageNumber,pageSize);
+		return new ResponseEntity<PostResponse>(postResponse,HttpStatus.OK);
 	}
 	
 	// get posts by user
@@ -78,12 +82,23 @@ public class PostController {
 		return new ResponseEntity<PostDto>(post,HttpStatus.OK);
 	}
 	
+	// pagination and sorting
 	@GetMapping("/postsPage")
 	public ResponseEntity<PostResponse> getAllPostsByPage(
 			@RequestParam(value="pageNumber",defaultValue = "0",required = false) Integer pageNumber,
-			@RequestParam(value="pageSize",defaultValue = "10",required = false) Integer pageSize
+			@RequestParam(value="pageSize",defaultValue = "10",required = false) Integer pageSize,
+			@RequestParam(value="sortBy", defaultValue = "postId", required = false) String sortBy,
+			@RequestParam(value="sortDir", defaultValue = "asc", required = false) String sortDir
 			){
-		PostResponse postResponse = this.postService.getAllPostsByPage(pageNumber,pageSize);
+		PostResponse postResponse = this.postService.getAllPostsByPage(pageNumber,pageSize,sortBy,sortDir);
 		return new ResponseEntity<PostResponse>(postResponse,HttpStatus.OK);
 	} 
+	
+	// searching
+	@GetMapping("/posts/search/{keywords}")
+	public ResponseEntity<List<PostDto>> searchPostByTitle(@PathVariable("keywords") String keywords)
+	{
+		List<PostDto> result = this.postService.searchPost(keywords);
+		return new ResponseEntity<List<PostDto>>(result,HttpStatus.OK);
+	}
 }

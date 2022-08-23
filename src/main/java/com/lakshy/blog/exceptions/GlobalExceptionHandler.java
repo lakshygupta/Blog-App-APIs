@@ -61,4 +61,24 @@ public class GlobalExceptionHandler {
 		resp.put("value", " request parameter  " + (String)ex.getValue());
 		return new ResponseEntity<Map<String,String>>(resp,HttpStatus.BAD_REQUEST);
 	}
+	
+	// file is not an image handler
+	@ExceptionHandler(IncorrectFileFormatException.class)
+	public ResponseEntity<ApiResponse> IncorrectFileFormatExceptionHandler(IncorrectFileFormatException ex)
+	{
+		String message = ex.getMessage();
+		ApiResponse apiResponse = new ApiResponse(message, false);
+		
+		return new ResponseEntity<ApiResponse>(apiResponse,HttpStatus.NOT_FOUND);
+	}
+	
+	// file not selected exception
+	@ExceptionHandler(StringIndexOutOfBoundsException.class)
+	public ResponseEntity<Map<String,String>> handleStringIndexOutOfBoundsExceptionException(StringIndexOutOfBoundsException ex)
+	{
+		Map<String, String> resp = new HashMap<>();
+		resp.put("message", ex.getMessage());
+		resp.put("name", "Image File Not Found in Request");
+		return new ResponseEntity<Map<String,String>>(resp,HttpStatus.BAD_REQUEST);
+	}
 }

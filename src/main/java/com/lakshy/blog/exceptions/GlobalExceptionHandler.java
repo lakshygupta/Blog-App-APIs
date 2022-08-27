@@ -29,6 +29,16 @@ public class GlobalExceptionHandler {
 		return new ResponseEntity<ApiResponse>(apiResponse,HttpStatus.NOT_FOUND);
 	}
 	
+	// invalid password in login api
+	@ExceptionHandler(ApiException.class)
+	public ResponseEntity<ApiResponse> apiExceptionHandler(ApiException ex)
+	{
+		String message = ex.getMessage();
+		ApiResponse apiResponse = new ApiResponse(message, true);
+		
+		return new ResponseEntity<ApiResponse>(apiResponse,HttpStatus.BAD_REQUEST);
+	}
+	
 	// not a custom created exception but raised by Validator on violation
 	@ExceptionHandler(MethodArgumentNotValidException.class)
 	public ResponseEntity<Map<String, String>> handleMethodArgumentNotValidException(MethodArgumentNotValidException ex){
@@ -81,4 +91,6 @@ public class GlobalExceptionHandler {
 		resp.put("name", "Image File Not Found in Request");
 		return new ResponseEntity<Map<String,String>>(resp,HttpStatus.BAD_REQUEST);
 	}
+	
+	
 }

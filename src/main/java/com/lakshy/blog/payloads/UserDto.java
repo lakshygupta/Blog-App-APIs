@@ -7,6 +7,11 @@ import javax.validation.constraints.Email;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.Size;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonProperty.Access;
+import com.lakshy.blog.entities.Role;
+
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -32,6 +37,7 @@ public class UserDto
 	
 	@NotEmpty
 	@Size(min=3,max=15, message = "Password must be 3 - 15 characters long")
+	@JsonProperty(access = Access.WRITE_ONLY)
 //	@Pattern(regexp = ) // add regular expression
 	private String password;
 	
@@ -39,4 +45,6 @@ public class UserDto
 	private String about;
 	
 	private Set<CommentDto> comments = new HashSet<>();
+	
+	private Set<RoleDto> roles= new HashSet<>();
 }

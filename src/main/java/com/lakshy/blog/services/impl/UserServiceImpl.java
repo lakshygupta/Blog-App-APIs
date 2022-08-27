@@ -7,11 +7,15 @@ import java.util.stream.Collectors;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.lakshy.blog.exceptions.ResourceNotFoundException;
+import com.lakshy.blog.config.AppConstants;
+import com.lakshy.blog.entities.Role;
 import com.lakshy.blog.entities.User;
 import com.lakshy.blog.payloads.UserDto;
+import com.lakshy.blog.repositories.RoleRepo;
 import com.lakshy.blog.repositories.UserRepo;
 import com.lakshy.blog.services.UserService;
 
@@ -24,6 +28,12 @@ public class UserServiceImpl implements UserService {
 	// we have a bean in main springboot class
 	@Autowired
 	private ModelMapper modelMapper;
+	
+	@Autowired
+	private PasswordEncoder passwordEncoder;
+	
+	@Autowired
+	private RoleRepo roleRepo;
 	
 	// since we are using UserDto so we need to convert it
 	// we can also use Modern mapper library instead of these two conversion methods
@@ -102,6 +112,24 @@ public class UserServiceImpl implements UserService {
 		User user = userRepo.findById(userId).orElseThrow(() -> new ResourceNotFoundException("User","Id",userId));
 		userRepo.delete(user);
 
+	}
+
+	@Override
+	public UserDto registerNewUser(UserDto userDto) {
+		
+		User user = this.modelMapper.map(userDto, User.class);
+		
+		// encoding the password
+		user.setPassword(this.passwordEncoder.encode(user.getPassword()));
+		
+		// getting role
+		Role role = this.roleRepo.findById(AppConstants.NORMAL_USER).get();
+		
+		user.getRoles().add(role);
+		
+		User savedUser = this.userRepo.save(user);
+		
+		return this.modelMapper.map(savedUser, UserDto.class);
 	}
 
 }
